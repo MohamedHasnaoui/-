@@ -131,7 +131,7 @@ function App() {
 
             <div className="text-center p-8 rounded-2xl bg-gradient-to-b from-emerald-50 to-white border-2 border-emerald-200 hover:shadow-xl transition">
               <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">👥</span>
+                <span className="text-4xl">🎓</span>
               </div>
               <h3 className="text-2xl font-bold text-emerald-900 mb-4">علماء ودعاة متقنون</h3>
               <p className="text-gray-700 leading-relaxed">
@@ -308,7 +308,7 @@ function App() {
 
           <div className="border-t border-emerald-800 pt-8 text-center">
             <p className="text-emerald-300">
-              © 2024 جمعية الرحمة للتربية والتنمية والأعمال الاجتماعية بمكناس. جميع الحقوق محفوظة.
+              © 2026 جمعية الرحمة للتربية والتنمية والأعمال الاجتماعية بمكناس. جميع الحقوق محفوظة.
             </p>
             <p className="text-emerald-400 mt-2 text-sm">
               "وَمَنْ أَحْيَاهَا فَكَأَنَّمَا أَحْيَا النَّاسَ جَمِيعًا"
