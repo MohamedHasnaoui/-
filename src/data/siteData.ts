@@ -60,6 +60,8 @@ export const initiatives = [
       "https://images.pexels.com/photos/3753994/pexels-photo-3753994.jpeg?auto=compress&cs=tinysrgb&w=600",
     scholars: 3,
     equipment: ["كاميرا", "ميكروفون", "حامل"],
+    goalAmount: 150000,
+    collectedAmount: 150000,
   },
   {
     id: 2,
@@ -71,6 +73,8 @@ export const initiatives = [
       "https://images.pexels.com/photos/2233416/pexels-photo-2233416.jpeg?auto=compress&cs=tinysrgb&w=600",
     scholars: 2,
     equipment: ["كاميرا", "ميكروفون"],
+    goalAmount: 120000,
+    collectedAmount: 85000,
   },
   {
     id: 3,
@@ -82,17 +86,47 @@ export const initiatives = [
       "https://images.pexels.com/photos/3753993/pexels-photo-3753993.jpeg?auto=compress&cs=tinysrgb&w=600",
     scholars: 5,
     equipment: ["كاميرا احترافية", "ميكروفون", "إضاءة", "حامل"],
+    goalAmount: 250000,
+    collectedAmount: 250000,
   },
   {
     id: 4,
     name: "مبادرة فاس",
     city: "فاس",
     description: "مشروع قادم لدعم الدعاة في العاصمة العلمية فاس",
-    status: "قريباً",
+    status: "جارية",
     image:
       "https://images.pexels.com/photos/2233418/pexels-photo-2233418.jpeg?auto=compress&cs=tinysrgb&w=600",
+    scholars: 4,
+    equipment: [],
+    goalAmount: 300000,
+    collectedAmount: 175000,
+  },
+  {
+    id: 5,
+    name: "مبادرة الرباط",
+    city: "الرباط",
+    description: "دعم المشايخ والدعاة في العاصمة الرباط بالتجهيزات اللازمة",
+    status: "قريباً",
+    image:
+      "https://images.pexels.com/photos/3753993/pexels-photo-3753993.jpeg?auto=compress&cs=tinysrgb&w=600",
     scholars: 0,
     equipment: [],
+    goalAmount: 200000,
+    collectedAmount: 45000,
+  },
+  {
+    id: 6,
+    name: "مبادرة طنجة",
+    city: "طنجة",
+    description: "تجهيز المساجد والدعاة بمدينة طنجة بالأدوات اللازمة للتصوير",
+    status: "قريباً",
+    image:
+      "https://images.pexels.com/photos/2233416/pexels-photo-2233416.jpeg?auto=compress&cs=tinysrgb&w=600",
+    scholars: 0,
+    equipment: [],
+    goalAmount: 180000,
+    collectedAmount: 25000,
   },
 ];
 
