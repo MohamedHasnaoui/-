@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Heart,
@@ -14,13 +15,31 @@ import {
   Target,
   HandHeart,
   TrendingUp,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { stats, initiatives } from "../data/siteData";
 
 const HomePage = () => {
-  const goalAmount = 1500000;
-  const currentAmount = 850000;
-  const progressPercentage = (currentAmount / goalAmount) * 100;
+  // Get ongoing initiatives for the carousel
+  const ongoingInitiatives = initiatives.filter(i => i.status === "جارية" || i.status === "قريباً").slice(0, 3);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto-slide every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % ongoingInitiatives.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [ongoingInitiatives.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % ongoingInitiatives.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + ongoingInitiatives.length) % ongoingInitiatives.length);
+  };
 
   return (
     <div>
@@ -254,153 +273,189 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Latest Initiatives */}
-      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 animate-fadeInUp">
-            <div>
-              <span className="inline-block bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                مبادراتنا
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                آخر المبادرات
-              </h2>
+      
+
+      {/* Progress Section - Initiatives Carousel */}
+      <section className="py-24 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 animate-fadeInUp">
+            <span className="inline-block bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+              المبادرات الحالية
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              ساهم في إتمام مبادراتنا
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              اختر المبادرة التي تريد المساهمة فيها وكن جزءاً من نشر العلم الشرعي
+            </p>
+          </div>
+
+          {/* Carousel Container */}
+          <div className="relative animate-fadeInUp delay-200">
+            {/* Navigation Arrows */}
+            <button
+              onClick={prevSlide}
+              aria-label="المبادرة السابقة"
+              className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-4 z-20 w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center text-emerald-600 hover:bg-emerald-50 transition-all hover:scale-110 border border-gray-100"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+            <button
+              onClick={nextSlide}
+              aria-label="المبادرة التالية"
+              className="absolute left-0 top-1/2 -translate-y-1/2 translate-x-4 z-20 w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center text-emerald-600 hover:bg-emerald-50 transition-all hover:scale-110 border border-gray-100"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            {/* Slides */}
+            <div className="overflow-hidden rounded-[2.5rem]">
+              <div 
+                className="flex transition-transform duration-700 ease-out"
+                style={{ transform: `translateX(${currentSlide * 100}%)` }}
+              >
+                {ongoingInitiatives.map((initiative) => {
+                  const progressPercentage = (initiative.collectedAmount / initiative.goalAmount) * 100;
+                  
+                  return (
+                    <div
+                      key={initiative.id}
+                      className="w-full flex-shrink-0"
+                    >
+                      <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-8 md:p-12 shadow-2xl border border-emerald-100 relative overflow-hidden">
+                        {/* Decorative */}
+                        <div className="absolute top-0 left-0 w-40 h-40 bg-emerald-100/50 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+                        <div className="absolute bottom-0 right-0 w-32 h-32 bg-amber-100/50 rounded-full translate-x-1/2 translate-y-1/2"></div>
+
+                        <div className="relative grid md:grid-cols-2 gap-8 items-center">
+                          {/* Image */}
+                          <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl">
+                            <img
+                              src={initiative.image}
+                              alt={initiative.name}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            <div className="absolute top-4 right-4">
+                              <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${
+                                initiative.status === "جارية" 
+                                  ? "bg-blue-500 text-white" 
+                                  : "bg-amber-500 text-white"
+                              }`}>
+                                {initiative.status}
+                              </span>
+                            </div>
+                            <div className="absolute bottom-4 right-4 left-4">
+                              <div className="flex items-center gap-2 text-white/90 text-sm">
+                                <MapPin className="w-4 h-4" />
+                                <span>{initiative.city}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div>
+                            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                              {initiative.name}
+                            </h3>
+                            <p className="text-gray-600 mb-6 leading-relaxed">
+                              {initiative.description}
+                            </p>
+
+                            {/* Progress Bar */}
+                            <div className="mb-6">
+                              <div className="flex justify-between items-center mb-3">
+                                <span className="text-gray-600 font-medium">التقدم</span>
+                                <span className="text-2xl font-bold text-emerald-700">
+                                  {progressPercentage.toFixed(0)}%
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
+                                <div
+                                  className="bg-gradient-to-l from-emerald-500 to-emerald-600 h-full rounded-full transition-all duration-1000 relative"
+                                  style={{ width: `${progressPercentage}%` }}
+                                >
+                                  <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                </div>
+                              </div>
+                              <div className="flex justify-between items-center mt-3 text-sm">
+                                <span className="text-gray-500">
+                                  تم جمع:{" "}
+                                  <span className="font-bold text-emerald-600">
+                                    {initiative.collectedAmount.toLocaleString("ar-MA")} درهم
+                                  </span>
+                                </span>
+                                <span className="text-gray-500">
+                                  الهدف:{" "}
+                                  <span className="font-bold text-gray-700">
+                                    {initiative.goalAmount.toLocaleString("ar-MA")} درهم
+                                  </span>
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Scholars Count */}
+                            <div className="flex items-center gap-4 mb-6 p-4 bg-white rounded-xl border border-gray-100">
+                              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                <Users className="w-6 h-6 text-emerald-600" />
+                              </div>
+                              <div>
+                                <p className="text-xl font-bold text-gray-900">{initiative.scholars}</p>
+                                <p className="text-sm text-gray-500">مشايخ سيستفيدون</p>
+                              </div>
+                            </div>
+
+                            {/* CTA */}
+                            <div className="flex gap-3">
+                              <Link
+                                to={`/initiatives/${initiative.id}`}
+                                className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-emerald-700 font-bold px-6 py-4 rounded-full text-lg border-2 border-emerald-600 transition-all duration-300 hover:scale-105"
+                              >
+                                التفاصيل
+                              </Link>
+                              <Link
+                                to="/donate"
+                                className="flex-1 inline-flex items-center gap-3 bg-gradient-to-l from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold px-8 py-4 rounded-full text-lg shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/40 justify-center"
+                              >
+                                <HandHeart className="w-6 h-6" />
+                                ساهم في المبادرة
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+
+            {/* Dots Indicator */}
+            <div className="flex justify-center gap-3 mt-8">
+              {ongoingInitiatives.map((initiative, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  aria-label={`الانتقال إلى ${initiative.name}`}
+                  className={`transition-all duration-300 rounded-full ${
+                    currentSlide === index 
+                      ? 'w-10 h-3 bg-emerald-600' 
+                      : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* View All Link */}
+          <div className="text-center mt-8">
             <Link
               to="/initiatives"
               className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium group"
             >
-              عرض الكل
+              عرض جميع المبادرات
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             </Link>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 animate-fadeInUp delay-200">
-            {initiatives.slice(0, 3).map((initiative, index) => (
-              <div
-                key={initiative.id}
-                className="group bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 border border-gray-100 hover-lift"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={initiative.image}
-                    alt={initiative.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  <div className="absolute top-4 right-4">
-                    <span
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold ${
-                        initiative.status === "مكتملة"
-                          ? "bg-green-500 text-white"
-                          : initiative.status === "جارية"
-                          ? "bg-blue-500 text-white"
-                          : "bg-amber-500 text-white"
-                      }`}
-                    >
-                      {initiative.status}
-                    </span>
-                  </div>
-                  <div className="absolute bottom-4 right-4 left-4">
-                    <div className="flex items-center gap-2 text-white/90 text-sm">
-                      <MapPin className="w-4 h-4" />
-                      <span>{initiative.city}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors">
-                    {initiative.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-                    {initiative.description}
-                  </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2 text-emerald-600">
-                      <Users className="w-4 h-4" />
-                      <span className="text-sm font-medium">
-                        {initiative.scholars} مشايخ
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 text-gray-400">
-                      {initiative.equipment.slice(0, 3).map((_, i) => (
-                        <div
-                          key={i}
-                          className="w-2 h-2 bg-emerald-400 rounded-full"
-                        ></div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Progress Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-emerald-50 via-white to-amber-50 p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-emerald-100 relative overflow-hidden animate-fadeInUp hover-lift">
-            {/* Decorative */}
-            <div className="absolute top-0 left-0 w-40 h-40 bg-emerald-100/50 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-32 h-32 bg-amber-100/50 rounded-full translate-x-1/2 translate-y-1/2"></div>
-
-            <div className="relative">
-              <div className="text-center mb-8">
-                <span className="inline-block bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
-                  المبادرة الحالية
-                </span>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  مبادرة تجهيز دعاة فاس
-                </h2>
-                <p className="text-gray-600">
-                  ساهم معنا لإتمام هذه المبادرة المباركة
-                </p>
-              </div>
-
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-gray-600 font-medium">التقدم</span>
-                  <span className="text-2xl font-bold text-emerald-700">
-                    {progressPercentage.toFixed(0)}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden shadow-inner">
-                  <div
-                    className="bg-gradient-to-l from-emerald-500 to-emerald-600 h-full rounded-full transition-all duration-1000 relative"
-                    style={{ width: `${progressPercentage}%` }}
-                  >
-                    <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center mt-3 text-sm">
-                  <span className="text-gray-500">
-                    تم جمع:{" "}
-                    <span className="font-bold text-emerald-600">
-                      {currentAmount.toLocaleString("ar-MA")} درهم
-                    </span>
-                  </span>
-                  <span className="text-gray-500">
-                    الهدف:{" "}
-                    <span className="font-bold text-gray-700">
-                      {goalAmount.toLocaleString("ar-MA")} درهم
-                    </span>
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <Link
-                  to="/donate"
-                  className="inline-flex items-center gap-3 bg-gradient-to-l from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold px-10 py-4 rounded-full text-lg shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/40"
-                >
-                  <HandHeart className="w-6 h-6" />
-                  ساهم في المبادرة
-                </Link>
-              </div>
-            </div>
           </div>
         </div>
       </section>
